@@ -1,9 +1,21 @@
+
+
 import React, { useState } from 'react'
 import TableTitle from './TableTitle'
 import TableHeader from './TableHeader'
 import { Pagination, Table } from 'antd';
 import AddDrawer from '../Drawer/AddDrawer';
 import ActionDropdown from '../ActionDropdown/ActionDropdown';
+import EditDrawer from '../Drawer/EditDrawer';
+
+const itemRender = (_, type, originalElement) => {
+  return type === "prev" ? (
+    <p>Previous</p>
+  ) : type === 'next' ? (
+    <p>Next</p>
+  ) : (originalElement)
+}
+
 
 const dataSource = [
   { key: '1', name: 'Mike', age: 32, address: '10 Downing Street' },
@@ -88,6 +100,7 @@ const dataSource = [
   { key: '80', name: 'Rosie', age: 30, address: '13 Redbridge' },
 ];
 
+
 const columns = [
   {
     title: 'Name',
@@ -111,48 +124,60 @@ const columns = [
     align: 'center'
   },
   {
-    title : 'Action',
-    key : 'action',
-    render : (record) => <ActionDropdown data={record}/>
+    title: 'Action',
+    key: 'action',
+    render: (record) => <ActionDropdown data={record} />
   }
 ];
 
 
 
-
-
-
 const StudentTable = () => {
+  const [columnInfo, setColumnsInfo] = useState(columns);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5); // default to 5
 
-
-  const [columnInfo , setColumnsInfo] = useState(columns);
-
-
-const handleChangeColumns = (cols) => {
+  const handleChangeColumns = (cols) => {
     setColumnsInfo(cols)
-}
+  }
 
+  const paginatedData = dataSource.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
+  const handlePaginationChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
+  };
 
   return (
     <div>
-    <div> 
-      <TableTitle />
-      <TableHeader columnInfo={columnInfo} handleChangeColumns={handleChangeColumns}/>
-      <Table 
-        rowSelection={{ type: "checkbox" }} 
-        dataSource={dataSource} 
-        columns={columnInfo} 
-        pagination={false}
-      />
-      <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-        <Pagination 
-          showSizeChanger 
-          pageSizeOptions={['5', '10', '20']} 
+      <div>
+        <TableTitle />
+        <TableHeader columnInfo={columnInfo} handleChangeColumns={handleChangeColumns} />
+        <Table
+          rowSelection={{ type: "checkbox" }}
+          dataSource={paginatedData}       
+          columns={columnInfo}
+          pagination={false}               
         />
+        <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+          <Pagination
+            current={currentPage}            
+            pageSize={pageSize}              
+            total={dataSource.length}       
+            showSizeChanger
+            pageSizeOptions={['5', '10', '20']}
+            onChange={handlePaginationChange} 
+            onShowSizeChange={handlePaginationChange} 
+            itemRender={itemRender}
+          />
+        </div>
       </div>
-    </div>
-    <AddDrawer/>
+      <AddDrawer />
+      <EditDrawer />
     </div>
   );
 };
