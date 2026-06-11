@@ -1,13 +1,22 @@
 import { Button, Input } from 'antd'
-import React, { useState } from 'react'
-import FilterComponent from '../FilterComponent/FilterComponent';
+import { useState } from 'react'
+import ColumnButton from '../ColumnButton/ColumnButton';
+import FilterButton from '../FilterButton/FilterButton';
+import FilterDataComponent from '../FilterDataComponent/FilterDataComponent';
+import { useToggleDrawer } from '../../hooks/useToggleDrawer';
 
-const TableHeader = () => {
+const TableHeader = ({columnInfo , handleChangeColumns}) => {
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(true);
 
+    const toggleDrawer = useToggleDrawer();
+
     const toggleFilter = () => {
         setIsFiltersOpen((state) => !state);
+    }
+
+    const handleOpenDrawer = () => {
+        toggleDrawer(true,"showDrawerAdd")
     }
 
     return (
@@ -17,13 +26,14 @@ const TableHeader = () => {
             </div>
 
             <div className='flex flex-wrap items-center gap-2'>
-                <Button>Columns</Button>
-                <Button onClick={toggleFilter}>Filters</Button>
-                <Button>Add New</Button>
+                <ColumnButton columnInfo={columnInfo} handleChangeColumns={handleChangeColumns}/>
+                <FilterButton toggleFilter={toggleFilter}/>
+               
+                <Button type='primary' onClick={handleOpenDrawer}>Add New</Button>
             </div>
             {isFiltersOpen && (
                 <div className='w-full mt-2'>
-                    <FilterComponent />
+                    <FilterDataComponent />
                 </div>
             )}
         </div>

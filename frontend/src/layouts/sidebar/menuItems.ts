@@ -27,4 +27,4 @@ export const defaultMenuItems: MenuItem[] = [
         text: 'Upload',
         link: '/upload',
     },
-];
+    ];

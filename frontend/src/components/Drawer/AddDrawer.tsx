@@ -1,0 +1,37 @@
+import { Drawer } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom';
+import { useToggleDrawer } from '../../hooks/useToggleDrawer';
+
+const AddDrawer = () => {
+
+    const [openDrawer , setOpenDrawer] = useState(false);
+    const location = useLocation();
+
+    const toggleDrawer = useToggleDrawer();
+
+    const onCloseDrawer = () => {
+        toggleDrawer(false , "showDrawerAdd");
+    }
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const showDrawerParams = queryParams.get("showDrawerAdd");
+
+        if(showDrawerParams == 'true'){
+            setOpenDrawer(true);
+        }
+        else{
+            setOpenDrawer(false);
+        }
+    },[location.search])
+
+    return (
+        
+        <Drawer width={400} open={openDrawer} title="Add Student" onClose={onCloseDrawer}>
+            <h3 className='text-xl'>hello ant d</h3>
+        </Drawer>
+    )
+}
+
+export default AddDrawer

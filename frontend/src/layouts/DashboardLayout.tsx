@@ -7,17 +7,16 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { menuOptions, menuPaths } from './sidebar/menuOption';
 import ProfileAndNotification from './profileAndNotification';
 import toast from 'react-hot-toast';
-import { getProfile, isAuthenticated, logoutService } from '../services/authService';
-import { email } from 'zod';
+import { getProfile, logoutService } from '../services/authService';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
-  const [user , setUser] = useState({
-    name : '',
-    email : '',
-  })
+  const [user, setUser] = useState({
+    name: '',
+    email: '', 
+  });
   const [loading, setLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [mobile, setMobile] = useState(false);
@@ -56,41 +55,37 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     }
   }, [mobile]);
 
-
-   useEffect(() => {
-  
+  useEffect(() => {
     const profile = async () => {
-        try {
-            const resp = await getProfile();
-            if(resp.status == 200 && resp.success == true){
-              setUser({
-                name : resp.data.name,
-                email : resp.data.email
-              })
-            }
-        } catch (error: any) {
-          toast.error(error.message || 'Something went wrong');
-        } 
-    }
+      try {
+        const resp = await getProfile();
+        if (resp.status === 200 && resp.success === true) {
+          setUser({
+            name: resp.data.name,
+            email: resp.data.email,
+          });
+        }
+      } catch (error: any) {
+        toast.error(error.message || 'Something went wrong');
+      }
+    };
     profile();
-  },[])
+  }, []);
 
   const logoutHandler = async () => {
-      setLoading(true);
-        try {
-            const resp = await logoutService();
-            console.log(resp);
-            
-            if(resp.status == 200 && resp.success == true){
-              localStorage.removeItem('token');
-              navigate('/login', { replace: true });
-              toast.success(resp.message || 'Something went wrong');
-            }
-        } catch (error: any) {
-            toast.error(error.message || 'Something went wrong');
-        } finally {
-            setLoading(false);
-        }
+    setLoading(true);
+    try {
+      const resp = await logoutService();
+      if (resp.status === 200 && resp.success === true) {
+        localStorage.removeItem('token');
+        navigate('/login', { replace: true });
+        toast.success(resp.message || 'Logged out successfully');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const profileItems: MenuProps['items'] = [
@@ -98,7 +93,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       key: 'profile',
       label: (
         <Link to="/profile" style={{ color: 'black', textDecoration: 'none' }}>
-          <UserOutlined /> {user.name}
+          <UserOutlined /> {user.name ? user.name : "User"}
         </Link>
       ),
     },
@@ -134,7 +129,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh'}}>
+    <Layout style={{ minHeight: '100vh' }}>
       <Sider
         trigger={null}
         collapsible
@@ -161,7 +156,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <Menu
             theme="dark"
             mode="inline"
-            selectedKeys={[selectedKey]}   // <-- controlled active state
+            selectedKeys={[selectedKey]}
             items={menuOptions}
             style={{ height: '100%' }}
           />
@@ -184,12 +179,21 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               style={{ fontSize: '16px', width: 64, height: 64 }}
             />
 
-            <ProfileAndNotification user={user} profileItems={profileItems} logoutHandler={logoutHandler} userProfile={userProfile} onMouseEnter={onmouseenter} onMouseLeave={onmouseleave} />
-
+            <ProfileAndNotification 
+              user={user} 
+              profileItems={profileItems} 
+              logoutHandler={logoutHandler} 
+              userProfile={userProfile} 
+            />
           </div>
         </Header>
-
-        <Content style={{ margin: '64px 16px 16px' }}>
+        <Content 
+          style={{ 
+            margin: '64px 16px 16px',
+            overflow: 'auto',          
+            height: 'calc(100vh - 64px)', 
+          }}
+        >
           <div
             style={{
               padding: 24,
