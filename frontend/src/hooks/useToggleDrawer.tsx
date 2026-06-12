@@ -6,17 +6,26 @@ export const useToggleDrawer = () => {
     const navigate = useNavigate()
     const location = useLocation()
 
-    const toggleDrawer = (show , key) => {
-        if(show){
-            navigate('?' + new URLSearchParams({ [key] : "true"}).toString())
+    const toggleDrawer = (show, key) => {
+        if (show) {
+            navigate('?' + new URLSearchParams({ [key]: "true" }).toString())
         }
-        else{
+        else {
             const queryParams = new URLSearchParams(location.search);
             queryParams.delete(key);
-            navigate("?"+ queryParams.toString(),{replace : true})
+            navigate("?" + queryParams.toString(), { replace: true })
         }
     }
 
     return toggleDrawer;
 
+}
+
+
+export const clearUrl = (key) => {
+    const navigate = useNavigate()
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.delete(key);
+    navigate("?" + queryParams.toString(), { replace: true })
 }

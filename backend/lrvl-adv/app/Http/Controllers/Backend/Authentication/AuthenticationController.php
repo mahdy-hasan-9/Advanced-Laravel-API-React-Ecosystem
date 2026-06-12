@@ -33,7 +33,6 @@ class AuthenticationController extends Controller
 
     public function logout(Request $request)
     {
-        // return "logout resp backend";
         $this->authService->logout($request->user());
 
         return response()->json([

@@ -2,6 +2,7 @@ import { Drawer } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { useToggleDrawer } from '../../hooks/useToggleDrawer';
+import AddDrawerForm from './AddDrawerForm';
 
 const AddDrawer = () => {
 
@@ -29,7 +30,7 @@ const AddDrawer = () => {
     return (
         
         <Drawer width={400} open={openDrawer} title="Add Student" onClose={onCloseDrawer}>
-            <h3 className='text-xl'>hello ant d</h3>
+            <AddDrawerForm setOpenDrawer={setOpenDrawer}/>
         </Drawer>
     )
 }

@@ -184,3 +184,74 @@ body {
     --bg-readonly-light: #2d2d2d;
     --bg-readonly-dark: #1a1a1a;
 }
+
+/* Add to your global CSS or component CSS */
+.avatar-uploader .ant-upload {
+  width: 128px;
+  height: 128px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.avatar-uploader .ant-upload-select {
+  border-radius: 8px;
+  border: 2px dashed #d9d9d9;
+  transition: border-color 0.3s;
+  background: #fafafa;
+}
+
+.avatar-uploader .ant-upload-select:hover {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.avatar-uploader:hover .upload-overlay {
+  opacity: 1 !important;
+}
+
+
+/* Replace previous CSS with this */
+.avatar-uploader .ant-upload {
+  width: 320px !important;      /* 🔥 Force 320px width */
+  height: 240px !important;    /* 🔥 Force 240px height */
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 auto;
+  border: none !important;      /* 🔥 Remove default border */
+  background: transparent !important;  /* 🔥 Remove default background */
+}
+
+.avatar-uploader .ant-upload-select {
+  border-radius: 8px;
+  border: 2px dashed #d9d9d9;
+  transition: border-color 0.3s;
+  background: #fafafa;
+  width: 320px !important;
+  height: 240px !important;
+}
+
+.avatar-uploader .ant-upload-select:hover {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.avatar-uploader:hover .upload-overlay {
+  opacity: 1 !important;
+}
+
+/* Card body padding fix */
+.student-upload-card .ant-card-body {
+  padding: 0 !important;
+}
+
+.upload-overlay {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Parent hover triggers overlay */
+div:hover > .upload-overlay,
+div:hover .upload-overlay {
+    opacity: 1 !important;
+}

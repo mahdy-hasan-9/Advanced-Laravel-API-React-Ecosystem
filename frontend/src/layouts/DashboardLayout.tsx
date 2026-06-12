@@ -73,6 +73,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const logoutHandler = async () => {
+    console.log('logout');
+    
     setLoading(true);
     try {
       const resp = await logoutService();
@@ -111,7 +113,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     {
       key: 'logout',
       label: (
-        <span style={{ color: '#ff4d4f' }} onClick={() => logoutHandler()}>
+        <span onClick={() => logoutHandler()}>
           <MenuFoldOutlined /> Logout
         </span>
       ),
