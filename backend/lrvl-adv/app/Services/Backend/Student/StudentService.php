@@ -18,9 +18,8 @@ class StudentService
     public function store(array $data): array
     {
         try {
-            if (isset($data['image']) && is_array($data['image']) && count($data['image']) > 0) {
-                $file = request()->file('image')[0];
-                $data['image_url'] = $file->store('students', 'public');
+            if (request()->hasFile('image')) {
+                $data['image_url'] = request()->file('image')->store('students', 'public');
             }
 
             $student = $this->student->create($data);
@@ -54,12 +53,11 @@ class StudentService
                 $data['image_url'] = null;
             }
 
-            if (isset($data['image']) && is_array($data['image']) && count($data['image']) > 0) {
+            if (request()->hasFile('image')) {
                 if ($student->image_url) {
                     Storage::disk('public')->delete($student->image_url);
                 }
-                $file = request()->file('image')[0];
-                $data['image_url'] = $file->store('students', 'public');
+                $data['image_url'] = request()->file('image')->store('students', 'public');
             }
 
             $student->update($data);

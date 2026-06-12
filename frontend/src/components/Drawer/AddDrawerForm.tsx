@@ -77,29 +77,18 @@ const AddDrawerForm = () => {
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
-            console.log(values);
-
-
-            const formData = new FormData();
-            formData.append('name', values.name);
-            formData.append('age', String(values.age));
-            formData.append('gender', values.gender);
-            formData.append('address', values.address);
-            formData.append('is_active', values.is_active ? '1' : '0');
-            formData.append('class', String(values.class));
-            if (values.image && values.image.length > 0) {
-                const fileObj = values.image[0].originFileObj;
-                if (fileObj instanceof File) {
-                    formData.append('image', fileObj, fileObj.name);
-                }
-            }
             setLoading(true);
-            const res = await createStudentService(formData);
-            console.log(res);
+            const res = await createStudentService(values);
             message.success('Student added successfully!');
             form.resetFields();
-        } catch (error) {
-            console.error('Validation failed:', error);
+        } catch (error: any) {
+            console.error('Submission failed:', error);
+            if (error.errors) {
+                // If there are validation errors, we can show them or just generic message
+                toast.error(error.message || 'Validation failed');
+            } else {
+                toast.error(error.message || 'Something went wrong');
+            }
         } finally {
             setLoading(false);
         }

@@ -4,73 +4,94 @@ export const isAuthenticated = () => {
     return localStorage.getItem('token');
 }
 
-export const getClassList = async () => {
-     const token = isAuthenticated();
-     const res = await fetch(`${API_BASE}/student/class`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization' : `Bearer ${token}`
-        },
+/**
+ * Helper to convert an object to FormData, handling files and arrays.
+ */
+const toFormData = (data: any) => {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+        const value = data[key];
+        if (value === undefined || value === null) return;
+        if (key === 'image' && Array.isArray(value) && value.length > 0) {
+            const fileObj = value[0].originFileObj;
+            if (fileObj instanceof File) {
+                formData.append('image', fileObj);
+            }
+        } else if (Array.isArray(value)) {
+            value.forEach(val => formData.append(`${key}[]`, val));
+        } else if (typeof value === 'boolean') {
+            formData.append(key, value ? '1' : '0');
+        } else {
+            formData.append(key, value);
+        }
     });
-    const resp = await res.json();
-    return resp ; 
-}
+    return formData;
+};
 
-
-export const getActivityList = async () => {
-     const token = isAuthenticated();
-     const res = await fetch(`${API_BASE}/student/activity`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization' : `Bearer ${token}`
-        },
-    });
-    const resp = await res.json();
-    return resp ; 
-}
-
-
-export const getBooksList = async () => {
-     const token = isAuthenticated();
-     const res = await fetch(`${API_BASE}/student/books`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization' : `Bearer ${token}`
-        },
-    });
-    const resp = await res.json();
-    return resp ; 
-}
-
-
-
-export const createStudentService = async (data: any) => {
+const request = async (endpoint: string, options: RequestInit = {}) => {
     const token = isAuthenticated();
-    const res = await fetch(`${API_BASE}/student/rsc`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Authorization' : `Bearer ${token}`
-        },
-        body: data
+    const headers: any = {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        ...options.headers,
+    };
+    
+    if (options.body && !(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+    }
+
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers,
     });
-    const resp = await res.json();
-    if (resp.success === false && resp.status === 422 && resp.errors) {
-        const error = new Error('Validation failed');
-        (error as any).errors = resp.errors;
-        (error as any).status = 422;
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        const error = new Error(data.message || 'Something went wrong');
+        (error as any).status = response.status;
+        (error as any).errors = data.errors;
         throw error;
     }
-    if (resp.success === false) {
-        const error = new Error(resp.message || 'Something went wrong');
-        (error as any).status = resp.status;
-        throw error;
+
+    return data;
+};
+
+export const getClassList = () => request('/student/class');
+
+export const getActivityList = () => request('/student/activity');
+
+export const getBooksList = () => request('/student/books');
+
+
+export const createStudentService = async (values: any) => {
+    const data = values.image ? toFormData(values) : values;
+    return request('/student/rsc', {
+        method: 'POST',
+        body: data instanceof FormData ? data : JSON.stringify(data),
+    });
+};
+
+
+export const updateStudentService = async (id: number, values: any) => {
+    const data = (values.image || values.image_removed) ? toFormData(values) : values;
+    let body: any = data;
+    let method = 'PUT';
+    if (data instanceof FormData) {
+        data.append('_method', 'PUT');
+        method = 'POST';
+        body = data;
+    } else {
+        body = JSON.stringify(data);
     }
-    return resp;
+    return request(`/student/rsc/${id}`, {
+        method,
+        body,
+    });
+};
+
+export const deleteStudentService = async (id: number) => {
+    return request(`/student/rsc/${id}`, {
+        method: 'DELETE',
+    });
 };

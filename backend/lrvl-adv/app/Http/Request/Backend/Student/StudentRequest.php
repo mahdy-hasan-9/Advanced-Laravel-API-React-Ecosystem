@@ -30,7 +30,7 @@ class StudentRequest extends FormRequest
             'address' => 'required|string',
             'is_active' => 'sometimes|boolean',
             'image_removed' => 'sometimes|boolean',
-            'image' => 'nullable',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 

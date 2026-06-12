@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Backend\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Request\Backend\Student\StudentRequest;
 use App\Services\Backend\Student\StudentService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
+
 
 class StudentController extends Controller
 {
@@ -24,9 +23,6 @@ class StudentController extends Controller
 
     public function store(StudentRequest $request)
     {
-
-    dd($request->validated());
-
         $result = $this->studentService->store($request->validated());
 
         return response()->json($result, $result['status']);
