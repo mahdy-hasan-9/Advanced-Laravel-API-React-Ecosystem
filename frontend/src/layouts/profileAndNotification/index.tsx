@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Avatar, List, Button, Empty, Typography, Dropdown } from 'antd';  
+import { Avatar, List, Button, Empty, Typography } from 'antd';
 import { UserOutlined, CheckOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import Notification from './Notification';
@@ -51,7 +51,6 @@ const notificationData = [
 ];
 
 const ProfileAndNotification = ({
-    user, 
     profileItems,
     logoutHandler,
     userProfile,
@@ -236,39 +235,73 @@ const ProfileAndNotification = ({
         </div>
     );
 
-    const dropdownItems = profileItems?.map((item) => {
-        if (!item) return null;
-        
-        if (item.type === 'divider') {
-            return { type: 'divider' as const };
-        }
+    const profileMenu = (
+        <div
+            style={{
+                position: 'absolute',
+                top: 'calc(100% + 8px)',
+                right: 0,
+                minWidth: 200,
+                background: '#fff',
+                borderRadius: 8,
+                boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                overflow: 'hidden',
+                zIndex: 1050,
+            }}
+        >
+            {profileItems?.map((item) => {
+                if (!item) return null;
 
-        const isLogout = item.key === 'logout';
-        
-        return {
-            key: item.key as string,
-            label: item.label,
-            danger: isLogout,
-            onClick: () => {
-                if (isLogout) logoutHandler();
-                setProfileOpen(false);
-            },
-        };
-    }).filter(Boolean) || [];
+                if (item.type === 'divider') {
+                    return (
+                        <div
+                            key={item.key || 'divider'}
+                            style={{ borderTop: '1px solid #f0f0f0', margin: '4px 0' }}
+                        />
+                    );
+                }
+
+                const isLogout = item.key === 'logout';
+                const label = item.label as React.ReactNode;
+
+                return (
+                    <div
+                        key={item.key}
+                        onClick={() => {
+                            if (isLogout) logoutHandler();
+                            setProfileOpen(false);
+                        }}
+                        style={{
+                            padding: '0px 16px',
+                            cursor: 'pointer',
+                            color: isLogout ? '#ff4d4f' : 'rgba(0,0,0,0.88)',
+                            transition: 'background 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                        }}
+                        onMouseEnter={(e) =>
+                            (e.currentTarget.style.background = 'rgba(0,0,0,0.04)')
+                        }
+                        onMouseLeave={(e) =>
+                            (e.currentTarget.style.background = 'transparent')
+                        }
+                    >
+                        {label}
+                    </div>
+                );
+            })}
+        </div>
+    );
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
 
             <Notification notifRef={notifRef} toggleNotif={toggleNotif} unreadCount={unreadCount} notifOpen={notifOpen} notificationCard={notificationCard} />
-            <Dropdown
-                menu={{ items: dropdownItems }}
-                placement="bottomRight"
-                trigger={['click']}
-                onOpenChange={(open) => setProfileOpen(open)}
-                open={profileOpen}
-            >
+
+            <div ref={profileRef} style={{ position: 'relative' }}>
                 <div
-                    ref={profileRef}
+                    onClick={toggleProfile}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -292,7 +325,9 @@ const ProfileAndNotification = ({
                         style={{ backgroundColor: '#1890ff' }}
                     />
                 </div>
-            </Dropdown>
+
+                {profileOpen && profileMenu}
+            </div>
         </div>
     );
 };

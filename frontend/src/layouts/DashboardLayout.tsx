@@ -11,12 +11,16 @@ import { getProfile, logoutService } from '../services/authService';
 
 const { Header, Content, Footer, Sider } = Layout;
 
+
+const access_token = localStorage.getItem('token');
+
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   const [user, setUser] = useState({
     name: '',
-    email: '', 
+    email: '',
   });
+  const [accessToken, setAccessToken] = useState(access_token)
   const [loading, setLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [mobile, setMobile] = useState(false);
@@ -28,8 +32,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   } = theme.useToken();
 
   const userProfile = {
-    name: 'Mahedy Hasan',
-    email: 'mahedy@example.com',
     avatar: '/assets/imgs/avatar.png',
   };
 
@@ -66,15 +68,17 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           });
         }
       } catch (error: any) {
+        localStorage.removeItem('token');
+        setAccessToken("");
         toast.error(error.message || 'Something went wrong');
       }
     };
     profile();
-  }, []);
+  }, [access_token]);
 
   const logoutHandler = async () => {
-    console.log('logout');
-    
+
+
     setLoading(true);
     try {
       const resp = await logoutService();
@@ -90,30 +94,29 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+
   const profileItems: MenuProps['items'] = [
     {
       key: 'profile',
       label: (
-        <Link to="/profile" style={{ color: 'black', textDecoration: 'none' }}>
+        <span>
           <UserOutlined /> {user.name ? user.name : "User"}
-        </Link>
+        </span>
       ),
     },
     {
       key: 'settings',
       label: (
-        <Link to="/settings" style={{ color: 'black', textDecoration: 'none' }}>
+        <span>
           <UploadOutlined /> Settings
-        </Link>
+        </span>
       ),
     },
-    {
-      type: 'divider',
-    },
+    { type: 'divider' },
     {
       key: 'logout',
       label: (
-        <span onClick={() => logoutHandler()}>
+        <span>
           <MenuFoldOutlined /> Logout
         </span>
       ),
@@ -181,19 +184,19 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               style={{ fontSize: '16px', width: 64, height: 64 }}
             />
 
-            <ProfileAndNotification 
-              user={user} 
-              profileItems={profileItems} 
-              logoutHandler={logoutHandler} 
-              userProfile={userProfile} 
+            <ProfileAndNotification
+              user={user}
+              profileItems={profileItems}
+              logoutHandler={logoutHandler}
+              userProfile={userProfile}
             />
           </div>
         </Header>
-        <Content 
-          style={{ 
+        <Content
+          style={{
             margin: '64px 16px 16px',
-            overflow: 'auto',          
-            height: 'calc(100vh - 64px)', 
+            overflow: 'auto',
+            height: 'calc(100vh - 64px)',
           }}
         >
           <div

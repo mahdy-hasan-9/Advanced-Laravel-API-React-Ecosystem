@@ -10,57 +10,68 @@ import SwitchInput from '../FormComponents/SwitchInput';
 import MultipleSelectWithSearchInput from '../FormComponents/MultipleSelectWithSearchInput';
 import TextAreaInput from '../FormComponents/TextAreaInput';
 import MultipleCheckboxInput from '../FormComponents/MultipleCheckboxInput';
+import { getActivityList, getBooksList, getClassList } from '../../services/studentService';
+import toast from 'react-hot-toast';
 
 
-const CLASSES = Array.from({ length: 12 }, (_, i) => ({
-    value: i + 1,
-    label: `Class ${i + 1}`
-}));
-
-const ACTIVITY_OPTIONS = [
-    { label: 'Good Student', value: 0 },
-    { label: 'Games', value: 1 },
-    { label: 'Artistic', value: 2 },
-    { label: 'Scientific', value: 3 },
-    { label: 'Engineer', value: 4 },
-    { label: 'Aesthetic', value: 5 }
-];
-
-const BOOK_OPTIONS = [
-    { label: 'Adventure', value: 0 },
-    { label: 'Detective', value: 1 },
-    { label: 'Love Story', value: 2 },
-    { label: 'Science', value: 3 },
-    { label: 'Fantasy', value: 4 },
-    { label: 'Horror', value: 5 },
-    { label: 'Biography', value: 6 },
-    { label: 'History', value: 7 },
-    { label: 'Mystery', value: 8 },
-    { label: 'Thriller', value: 9 }
-];
 
 const GENDER_OPTIONS = [
     { label: 'Male', value: 'male' },
     { label: 'Female', value: 'female' }
 ];
 
-// const ACTIVITY_OPTIONS = ACTIVITIES.map(a => ({ value: a, label: a }));
-// const BOOK_OPTIONS = BOOK_GENRES.map(g => ({
-//     label: g,
-//     value: g.replace(/\s+/g, '_')
-// }));
 
 const AddDrawerForm = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [classes , setClasses] = useState(CLASSES);
-    const [activityOptions , setActivityOptons] = useState(ACTIVITY_OPTIONS)
-    const [bookOptions , setBookOptons] = useState(BOOK_OPTIONS)
-
+    const [classes, setClasses] = useState([]);
+    const [activityOptions, setActivityOptons] = useState([]);
+    const [bookOptions, setBookOptons] = useState([]);
 
     useEffect(() => {
+        const classList = async () => {
+            try {
+                const resp = await getClassList();
+                if (resp.status === 200 && resp.success === true) {
+                    setClasses(resp.data);
+                }
+            } catch (error: any) {
+                localStorage.removeItem('token');
+                toast.error(error.message || 'Something went wrong');
+            }
+        };
+        classList();
 
-    },[]);
+
+        const activityList = async () => {
+            try {
+                const resp = await getActivityList();
+                if (resp.status === 200 && resp.success === true) {
+                    setActivityOptons(resp.data);
+                }
+            } catch (error: any) {
+                localStorage.removeItem('token');
+                toast.error(error.message || 'Something went wrong');
+            }
+        }
+        activityList();
+
+          const bookList = async () => {
+            try {
+                const resp = await getBooksList();
+                if (resp.status === 200 && resp.success === true) {
+                    setBookOptons(resp.data);
+                }
+            } catch (error: any) {
+                localStorage.removeItem('token');
+                toast.error(error.message || 'Something went wrong');
+            }
+        }
+        bookList();
+
+    }, []);
+
+    getActivityList
 
 
     const handleSubmit = async () => {

@@ -64,6 +64,9 @@ export const getProfile = async () => {
             'Authorization' : `Bearer ${token}`
         },
     });
+
+    if(res.status == 401) localStorage.removeItem('token');
+    
     const resp = await res.json();
     return resp ; 
 }
@@ -71,7 +74,7 @@ export const getProfile = async () => {
 export const logoutService = async () => {
     const token = isAuthenticated();
     if(token != null){
- const res = await fetch(`${API_BASE}/auth/user/logout`, {
+    const res = await fetch(`${API_BASE}/auth/user/logout`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -79,9 +82,7 @@ export const logoutService = async () => {
             'Authorization' : `Bearer ${token}`
         },
     });
-    const resp = await res.json();
-    return resp ; 
+        const resp = await res.json();
+        return resp ; 
     }
-    
-   
 }

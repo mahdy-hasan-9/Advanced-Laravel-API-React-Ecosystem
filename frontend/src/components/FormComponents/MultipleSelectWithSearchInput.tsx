@@ -26,7 +26,7 @@ const MultipleSelectWithSearchInput = ({
     options,
     placeholder,
     required = true,
-    size = 'large',
+    size = 'middle',
     rules = [],
     initialValue,
     disabled,

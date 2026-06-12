@@ -17,7 +17,7 @@ class BookSeeder extends Seeder
             ['name' => 'Adventure'],
             ['name' => 'Detective'],
             ['name' => 'Love Story'],
-            ['name' => 'Science Fiction'],
+            ['name' => 'Science'],
             ['name' => 'Fantasy'],
             ['name' => 'Horror'],
             ['name' => 'Biography'],
