@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Form, Button, Row, Col, Card, message, Space } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
-// import ImageUpload from '../FormComponents/ImageUpload';
 import TextInput from '../FormComponents/TextInput';
 import NumberInput from '../FormComponents/NumberInput';
 import RadioInput from '../FormComponents/RadioInput';

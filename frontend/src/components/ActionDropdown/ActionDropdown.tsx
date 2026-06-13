@@ -56,7 +56,6 @@ const ActionDropdown = ({ data }) => {
             </Dropdown>
 
             <Modal
-
                 open={isOpen}
                 onOk={() => {
                     hangleDelete(data.id);

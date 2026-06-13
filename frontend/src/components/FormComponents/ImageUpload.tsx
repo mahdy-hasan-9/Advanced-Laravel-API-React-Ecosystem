@@ -5,9 +5,10 @@ import { Modal, Upload, type UploadFile, type UploadProps } from 'antd';
 interface ImageUploadProps {
     value?: UploadFile[];          
     onChange?: (fileList: UploadFile[]) => void;  
-    imageUrl?: string;          
+    imageUrl?: string;        
+}  
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange, imageUrl }) => {
+const ImageUpload = ({ value, onChange, imageUrl }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
