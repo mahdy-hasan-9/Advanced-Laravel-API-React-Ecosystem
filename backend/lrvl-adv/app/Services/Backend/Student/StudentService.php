@@ -23,6 +23,8 @@ class StudentService
             }
 
             $student = $this->student->create($data);
+            $student->activities()->sync($data['activities']);
+            $student->books()->sync($data['books'] ?? []);
 
             return [
                 'success' => true,

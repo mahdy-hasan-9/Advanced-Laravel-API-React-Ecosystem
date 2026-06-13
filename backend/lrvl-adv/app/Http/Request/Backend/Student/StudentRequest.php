@@ -31,6 +31,9 @@ class StudentRequest extends FormRequest
             'is_active' => 'sometimes|boolean',
             'image_removed' => 'sometimes|boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'activities' => 'nullable|array',
+            'books' => 'nullable|array',
+            'class' => 'nullable'
         ];
     }
 

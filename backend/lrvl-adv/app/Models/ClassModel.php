@@ -12,4 +12,8 @@ class ClassModel extends Model
         'is_active' => 'boolean',
         'level' => 'integer',
     ];
+
+    public function students(){
+        return $this->hasMany(Student::class,'class_id');
+    }
 }

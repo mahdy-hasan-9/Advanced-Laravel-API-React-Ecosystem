@@ -23,6 +23,9 @@ class StudentController extends Controller
 
     public function store(StudentRequest $request)
     {
+
+        // return response()->json($request->validated());
+
         $result = $this->studentService->store($request->validated());
 
         return response()->json($result, $result['status']);

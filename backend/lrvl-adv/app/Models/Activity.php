@@ -14,4 +14,8 @@ class Activity extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function students(){
+        return $this->belongsToMany(Student::class,'activity_student','activity_id','student_id');
+    }
 }

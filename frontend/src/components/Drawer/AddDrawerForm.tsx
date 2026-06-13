@@ -78,6 +78,7 @@ const AddDrawerForm = () => {
         try {
             const values = await form.validateFields();
             setLoading(true);
+            console.log('Form values:', values);
             const res = await createStudentService(values);
             message.success('Student added successfully!');
             form.resetFields();
