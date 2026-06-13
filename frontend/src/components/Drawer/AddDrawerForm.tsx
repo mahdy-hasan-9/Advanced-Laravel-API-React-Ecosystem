@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Card, message, Space } from 'antd';
-import { SaveOutlined, UserOutlined, HomeOutlined, BookOutlined } from '@ant-design/icons';
-import ImageUpload from '../FormComponents/ImageUpload';
+import { Form, Button, Row, Col, Card, message, Space, Upload, Modal } from 'antd';
+import { SaveOutlined, PlusOutlined } from '@ant-design/icons';
+import type { UploadFile, UploadProps } from 'antd';
 import TextInput from '../FormComponents/TextInput';
 import NumberInput from '../FormComponents/NumberInput';
 import RadioInput from '../FormComponents/RadioInput';
@@ -12,6 +12,7 @@ import TextAreaInput from '../FormComponents/TextAreaInput';
 import MultipleCheckboxInput from '../FormComponents/MultipleCheckboxInput';
 import { createStudentService, getActivityList, getBooksList, getClassList } from '../../services/studentService';
 import toast from 'react-hot-toast';
+import ImageUpload from '../FormComponents/ImageUpload';
 
 
 
@@ -19,7 +20,6 @@ const GENDER_OPTIONS = [
     { label: 'Male', value: 'male' },
     { label: 'Female', value: 'female' }
 ];
-
 
 const AddDrawerForm = () => {
     const [form] = Form.useForm();
@@ -41,7 +41,6 @@ const AddDrawerForm = () => {
             }
         };
         classList();
-
 
         const activityList = async () => {
             try {
@@ -68,22 +67,19 @@ const AddDrawerForm = () => {
             }
         }
         bookList();
-
     }, []);
-
-
 
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
             setLoading(true);
+            console.log('Form values:', values);
             const res = await createStudentService(values);
             message.success('Student added successfully!');
             form.resetFields();
         } catch (error: any) {
             console.error('Submission failed:', error);
             if (error.errors) {
-                // If there are validation errors, we can show them or just generic message
                 toast.error(error.message || 'Validation failed');
             } else {
                 toast.error(error.message || 'Something went wrong');
@@ -117,7 +113,6 @@ const AddDrawerForm = () => {
                 <TextInput
                     name="name"
                     label="Student Name"
-                    // placeholder="Enter student full name"
                     min={2}
                     max={50}
                 />
@@ -127,7 +122,6 @@ const AddDrawerForm = () => {
                         <NumberInput
                             name="age"
                             label="Age"
-                            // placeholder="Age"
                             min={5}
                             max={25}
                         />
@@ -142,7 +136,6 @@ const AddDrawerForm = () => {
                         />
                     </Col>
                 </Row>
-
 
                 <Row gutter={16}>
                     <Col span={12}>
@@ -173,7 +166,6 @@ const AddDrawerForm = () => {
                     options={activityOptions}
                 />
 
-
                 <TextAreaInput
                     name="address"
                     label={
@@ -186,7 +178,6 @@ const AddDrawerForm = () => {
                     rows={3}
                 />
 
-
                 <MultipleCheckboxInput
                     name="books"
                     label="Books"
@@ -194,7 +185,6 @@ const AddDrawerForm = () => {
                     layout="grid"
                     gridCols={3}
                 />
-
 
                 <Form.Item style={{ marginTop: 24, marginBottom: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Form, Button, Row, Col, Card, message, Space } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
-import ImageUpload from '../FormComponents/ImageUpload';
+// import ImageUpload from '../FormComponents/ImageUpload';
 import TextInput from '../FormComponents/TextInput';
 import NumberInput from '../FormComponents/NumberInput';
 import RadioInput from '../FormComponents/RadioInput';
@@ -12,6 +12,7 @@ import TextAreaInput from '../FormComponents/TextAreaInput';
 import MultipleCheckboxInput from '../FormComponents/MultipleCheckboxInput';
 import { createStudentService, getActivityList, getBooksList, getClassList, getStudentDetails, getStudentList, updateStudentService } from '../../services/studentService';
 import toast from 'react-hot-toast';
+import ImageUpload from '../FormComponents/ImageUpload';
 
 
 
@@ -27,7 +28,7 @@ const EditDrawerForm = () => {
   const [classes, setClasses] = useState([]);
   const [activityOptions, setActivityOptons] = useState([]);
   const [bookOptions, setBookOptons] = useState([]);
-  const [studentId , setStudentId] = useState<string>();
+  const [studentId, setStudentId] = useState<string>();
 
   useEffect(() => {
     const classList = async () => {
@@ -83,6 +84,9 @@ const EditDrawerForm = () => {
         if (id) {
           const resp = await getStudentDetails(id);
 
+          console.log(resp);
+
+
           if (resp.status === 200 && resp.success === true) {
 
             const studentData = Array.isArray(resp.data) ? resp.data[0] : resp.data;
@@ -122,7 +126,7 @@ const EditDrawerForm = () => {
       }
     };
     fetchStudentData();
-  }, [form]);
+  }, [form, studentId]);
 
 
   const handleSubmit = async () => {
@@ -164,8 +168,9 @@ const EditDrawerForm = () => {
             rules={[{ required: true, message: 'Please upload student image!' }]}
             style={{ marginBottom: 0 }}
           >
-            <ImageUpload name="avatar" maxSize={2} />
+            <ImageUpload />
           </Form.Item>
+
         </Card>
 
         <TextInput
