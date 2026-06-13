@@ -78,9 +78,6 @@ export const updateStudentService = async (id: string, values: any) => {
     let body: any = data;
     let method = 'PUT';
 
-    console.log(data + " from service");
-    
-
     if (data instanceof FormData) {
         data.append('_method', 'PUT');
         method = 'PUT';

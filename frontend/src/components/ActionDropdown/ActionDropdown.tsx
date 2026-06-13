@@ -1,4 +1,4 @@
-import { Button, Dropdown, Modal } from 'antd'
+import { Button, Dropdown, message, Modal } from 'antd'
 import actionIcon from '../../assets/icons/action.svg'
 import editIcon from '../../assets/icons/edit.svg';
 import deleteIcon from '../../assets/icons/trash.svg'
@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { useToggleDrawer } from '../../hooks/useToggleDrawer';
 import { deleteStudentService } from '../../services/studentService';
 import toast from 'react-hot-toast';
+import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const ActionDropdown = ({ data }) => {
 
@@ -13,26 +14,33 @@ const ActionDropdown = ({ data }) => {
     const [loading, setLoading] = useState(false);
 
     const toggleDrawer = useToggleDrawer();
+    const queryClient = useQueryClient();
 
     const handleEdit = () => {
         toggleDrawer(true, "showDrawerEdit", data.id)
     }
 
-    const hangleDelete = async (id) => {
-        try {
-            setLoading(true);
-            const resp = await deleteStudentService(id)
-            console.log(resp + " from delete service");
-            setIsOpen(false);
-        } catch (error: any) {
-            console.error('Submission failed:', error);
+
+    const { mutate: deleteStudent } = useMutation({
+        mutationFn: deleteStudentService,
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["students"],
+            });
+        },
+        onError: (error: any) => {
             toast.error(error.message || 'Something went wrong');
-
-        } finally {
-            setLoading(false);
         }
+    })
 
 
+    const hangleDelete = async (id : any) => {
+        try {
+            deleteStudent(id)
+            message.success('Student deleted successfully!');
+        } catch (error: any) {
+            toast.error(error.message || 'Something went wrong');
+        }
     }
 
 

@@ -139,7 +139,7 @@ const StudentTable = () => {
   }
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ['todos'],
+    queryKey: ['students'],
     queryFn: getStudentList,
   })
 
@@ -150,7 +150,6 @@ const StudentTable = () => {
     return <div>Error: {error instanceof Error ? error.message : 'An error occurred'}</div>
   }
 
-  // console.log(data.data);
 
   const paginatedData = data.data?.slice(
     (currentPage - 1) * pageSize,
@@ -168,7 +167,6 @@ const StudentTable = () => {
         <TableTitle />
         <TableHeader columnInfo={columnInfo} handleChangeColumns={handleChangeColumns} />
 
-        {/* 🔥 FIX: Wrap table in scrollable container for mobile */}
         <div style={{ overflowX: 'auto', width: '100%' }}>
           <Table
             rowKey="id"
@@ -176,17 +174,16 @@ const StudentTable = () => {
             dataSource={paginatedData}
             columns={columnInfo}
             pagination={false}
-            scroll={{ x: 'max-content' }}  // 🔥 Horizontal scroll on small screens
-            size="small"  // 🔥 Smaller padding on mobile
+            scroll={{ x: 'max-content' }}  
+            size="small"  
           />
         </div>
 
-        {/* 🔥 FIX: Pagination wraps on mobile */}
         <div style={{
           marginTop: 16,
           display: 'flex',
           justifyContent: 'flex-end',
-          flexWrap: 'wrap',  // Wrap to next line on small screens
+          flexWrap: 'wrap',  
           gap: 8
         }}>
           <Pagination
@@ -198,7 +195,7 @@ const StudentTable = () => {
             onChange={handlePaginationChange}
             onShowSizeChange={handlePaginationChange}
             itemRender={itemRender}
-            responsive={true}  // 🔥 AntD responsive pagination
+            responsive={true}  
             showTotal={(total, range) => `${range[0]}-${range[1]} of ${total}`}
           />
         </div>

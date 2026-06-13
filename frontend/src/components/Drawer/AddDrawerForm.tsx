@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Card, message, Space, Upload, Modal } from 'antd';
-import { SaveOutlined, PlusOutlined } from '@ant-design/icons';
-import type { UploadFile, UploadProps } from 'antd';
+import { Form, Button, Row, Col, Card, message, Space } from 'antd';
+import { SaveOutlined } from '@ant-design/icons';
 import TextInput from '../FormComponents/TextInput';
 import NumberInput from '../FormComponents/NumberInput';
 import RadioInput from '../FormComponents/RadioInput';
@@ -13,6 +12,7 @@ import MultipleCheckboxInput from '../FormComponents/MultipleCheckboxInput';
 import { createStudentService, getActivityList, getBooksList, getClassList } from '../../services/studentService';
 import toast from 'react-hot-toast';
 import ImageUpload from '../FormComponents/ImageUpload';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 
 
@@ -28,66 +28,108 @@ const AddDrawerForm = () => {
     const [activityOptions, setActivityOptons] = useState([]);
     const [bookOptions, setBookOptons] = useState([]);
 
+
+    const queryClient = useQueryClient();
+
+    const classQuery = useQuery({
+        queryKey: ['classList'],
+        queryFn: getClassList,
+    });
     useEffect(() => {
-        const classList = async () => {
-            try {
-                const resp = await getClassList();
-                if (resp.status === 200 && resp.success === true) {
-                    setClasses(resp.data);
-                }
-            } catch (error: any) {
-                localStorage.removeItem('token');
-                toast.error(error.message || 'Something went wrong');
-            }
-        };
-        classList();
-
-        const activityList = async () => {
-            try {
-                const resp = await getActivityList();
-                if (resp.status === 200 && resp.success === true) {
-                    setActivityOptons(resp.data);
-                }
-            } catch (error: any) {
-                localStorage.removeItem('token');
-                toast.error(error.message || 'Something went wrong');
+        if (classQuery.data) {
+            const { isPending, isError, data, error, isSuccess } = classQuery;
+            if (isPending) {
+                console.log("Class list is loading...");
+            } else if (isError) {
+                toast.error(error instanceof Error ? error.message : 'Something went wrong while fetching class list');
+            } else if (isSuccess) {
+                setClasses(data.data);
             }
         }
-        activityList();
+    }, [classQuery.data]);
 
-        const bookList = async () => {
-            try {
-                const resp = await getBooksList();
-                if (resp.status === 200 && resp.success === true) {
-                    setBookOptons(resp.data);
-                }
-            } catch (error: any) {
-                localStorage.removeItem('token');
-                toast.error(error.message || 'Something went wrong');
+    const activityQuery = useQuery({
+        queryKey: ['activityList'],
+        queryFn: getActivityList,
+    });
+    useEffect(() => {
+        if (activityQuery.data) {
+            const { isPending, isError, data, error, isSuccess } = activityQuery;
+            if (isPending) {
+                console.log("Activity list is loading...");
+            } else if (isError) {
+                toast.error(error instanceof Error ? error.message : 'Something went wrong while fetching activity list');
+            } else if (isSuccess) {
+                setActivityOptons(data.data);
             }
         }
-        bookList();
-    }, []);
+    }, [activityQuery.data]);
+
+    const bookQuery = useQuery({
+        queryKey: ['bookList'],
+        queryFn: getBooksList,
+    });
+    useEffect(() => {
+        if (bookQuery.data) {
+            const { isPending, isError, data, error, isSuccess } = bookQuery;
+            if (isPending) {
+                console.log("Book list is loading...");
+            } else if (isError) {
+                toast.error(error instanceof Error ? error.message : 'Something went wrong while fetching book list');
+            } else if (isSuccess) {
+                setBookOptons(data.data);
+            }
+        }
+    }, [bookQuery.data]);
+
+    const { mutate: createStudentApi } = useMutation({
+        mutationFn: createStudentService,
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["students"],
+            });
+        },
+        onError: (error: any) => {
+            toast.error(error.message || 'Something went wrong');
+        }
+    })
 
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
-            setLoading(true);
-            console.log('Form values:', values);
-            const res = await createStudentService(values);
+            createStudentApi(values);
             message.success('Student added successfully!');
             form.resetFields();
+
         } catch (error: any) {
-            console.error('Submission failed:', error);
-            if (error.errors) {
-                toast.error(error.message || 'Validation failed');
+            if (error.errorFields) {
+                console.error('Validation failed:', error);
             } else {
-                toast.error(error.message || 'Something went wrong');
+                console.error('API error:', error);
             }
-        } finally {
-            setLoading(false);
         }
     };
+
+
+    // const handleSubmit = async () => {
+    //     try {
+    //         const values = await form.validateFields();
+    //         setLoading(true);
+    //         console.log('Form values:', values);
+    //         const res = await createStudentService(values);
+    //         message.success('Student added successfully!');
+    //         form.resetFields();
+    //     } catch (error: any) {
+    //         console.error('Submission failed:', error);
+    //         if (error.errors) {
+    //             toast.error(error.message || 'Validation failed');
+    //         } else {
+    //             toast.error(error.message || 'Something went wrong');
+    //         }
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const normFile = (e: any) => {
         if (Array.isArray(e)) return e;
