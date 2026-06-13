@@ -4,16 +4,37 @@ import editIcon from '../../assets/icons/edit.svg';
 import deleteIcon from '../../assets/icons/trash.svg'
 import React, { useState } from 'react'
 import { useToggleDrawer } from '../../hooks/useToggleDrawer';
+import { deleteStudentService } from '../../services/studentService';
+import toast from 'react-hot-toast';
 
 const ActionDropdown = ({ data }) => {
 
     const [isOpen, setIsOpen] = useState(false)
+    const [loading, setLoading] = useState(false);
 
     const toggleDrawer = useToggleDrawer();
-    
+
     const handleEdit = () => {
         toggleDrawer(true, "showDrawerEdit", data.id)
     }
+
+    const hangleDelete = async (id) => {
+        try {
+            setLoading(true);
+            const resp = await deleteStudentService(id)
+            console.log(resp + " from delete service");
+            setIsOpen(false);
+        } catch (error: any) {
+            console.error('Submission failed:', error);
+            toast.error(error.message || 'Something went wrong');
+
+        } finally {
+            setLoading(false);
+        }
+
+
+    }
+
 
     const items = [{
         key: 'edit',
@@ -38,7 +59,7 @@ const ActionDropdown = ({ data }) => {
 
                 open={isOpen}
                 onOk={() => {
-                    setIsOpen(false);
+                    hangleDelete(data.id);
                 }}
                 onCancel={() => setIsOpen(false)}
                 okText="Delete"
