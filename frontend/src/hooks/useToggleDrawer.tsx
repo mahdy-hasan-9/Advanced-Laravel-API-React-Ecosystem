@@ -7,14 +7,15 @@ export const useToggleDrawer = () => {
     const location = useLocation();
 
     const toggleDrawer = (show: boolean, key: string, recordId?: string) => {
-        console.log(recordId);
         if (show) {
+            console.log(recordId);
             navigate(
                 "?" +
                 new URLSearchParams({
                     [key]: recordId ? `true-${recordId}` : "true",
                 }).toString()
             );
+            return toggleDrawer;
         } else {
             const queryParams = new URLSearchParams(location.search);
             queryParams.delete(key);

@@ -1,124 +1,13 @@
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    align: 'left',
-    render: (text: string) => <p className='capitalize color-slate-700'>{text}</p>
-  },
-  {
-    title: 'Image',
-    dataIndex: 'image_url',
-    key: 'image',
-    align: 'center',
-    render: (image_url: string) => {
-      if (!image_url) {
-        return <DefaultImage />;
-      }
-
-      const fullUrl = image_url.startsWith('http')
-        ? image_url
-        :`${import.meta.env.VITE_API_URL}/storage/${image_url}`;
-
-      return (
-        <img
-          src={fullUrl}
-          alt="Student"
-          style={{
-            margin: '0 auto',
-            width: '50px',
-            height: '50px',
-            objectFit: 'cover',
-            borderRadius: '4px'
-          }}
-        />
-      );
-    }
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-    align: 'center',
-    width: 100,
-    // hidden : true , 
-  },
-  {
-    title: 'Class',
-    dataIndex: 'student_class',
-    key: 'class',
-    align: 'center',
-    render: (studentClass: any) => studentClass?.name || '-'
-  },
-  {
-    title: 'Activity',
-    dataIndex: 'activities',
-    key: 'activity',
-    align: 'center',
-    render: (activities: any[]) => {
-      if (!activities || activities.length === 0) return '-';
-      return (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center' }}>
-          {activities.map((activity) => (
-            <span key={activity.id} style={{
-              textAlign: 'center',
-              background: '#f0f0f0',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontSize: '12px'
-            }}>
-              {activity.name}
-            </span>
-          ))}
-        </div>
-      );
-    }
-  },
-  {
-    title: 'Books',
-    dataIndex: 'books',
-    key: 'books',
-    align: 'center',
-    render: (books: any[]) => {
-      if (!books || books.length === 0) return '-';
-      return (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center' }}>
-          {books.map((book) => (
-            <span key={book.id} style={{
-              background: '#e6f7ff',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontSize: '12px',
-              color: '#1890ff'
-            }}>
-              {book.name}
-            </span>
-          ))}
-        </div>
-      );
-    }
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    align: 'right',
-    render: (_, record) => <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-      <ActionDropdown data={record} />
-    </div>
-  }
-];
-
 
 import React, { useState } from 'react'
 import TableTitle from './TableTitle'
 import TableHeader from './TableHeader'
 import { Pagination, Table } from 'antd';
 import AddDrawer from '../Drawer/AddDrawer';
-import ActionDropdown from '../ActionDropdown/ActionDropdown';
-import EditDrawer from '../Drawer/EditDrawer';
 import { getStudentList } from '../../services/studentService';
 import { useQuery } from '@tanstack/react-query';
-import DefaultImage from '../FormComponents/DefaultImage';
+import { columns } from './studentTableColumn';
+import EditDrawer from '../Drawer/EditDrawer';
 
 const itemRender = (_, type, originalElement) => {
   return type === "prev" ? (
@@ -174,8 +63,8 @@ const StudentTable = () => {
             dataSource={paginatedData}
             columns={columnInfo}
             pagination={false}
-            scroll={{ x: 'max-content' }}  
-            size="small"  
+            scroll={{ x: 'max-content' }}
+            size="small"
           />
         </div>
 
@@ -183,7 +72,7 @@ const StudentTable = () => {
           marginTop: 16,
           display: 'flex',
           justifyContent: 'flex-end',
-          flexWrap: 'wrap',  
+          flexWrap: 'wrap',
           gap: 8
         }}>
           <Pagination
@@ -195,13 +84,13 @@ const StudentTable = () => {
             onChange={handlePaginationChange}
             onShowSizeChange={handlePaginationChange}
             itemRender={itemRender}
-            responsive={true}  
+            responsive={true}
             showTotal={(total, range) => `${range[0]}-${range[1]} of ${total}`}
           />
         </div>
       </div>
       <AddDrawer />
-
+      <EditDrawer />
     </div>
   );
 };

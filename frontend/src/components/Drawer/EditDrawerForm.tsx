@@ -158,6 +158,9 @@ const EditDrawerForm = () => {
       }
     };
     fetchStudentData();
+
+    console.log("Form values updated with student data");
+
   }, [form, studentId, location.search]);
 
 

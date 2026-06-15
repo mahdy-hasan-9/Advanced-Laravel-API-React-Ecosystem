@@ -1,11 +1,10 @@
 
 import EditDrawerForm from './EditDrawerForm';
 
-const EditDrawer = ({data}) => {
-
+const EditDrawer = () => {
 
     return (
-        <EditDrawerForm data={data} />
+        <EditDrawerForm />
     )
 }
 

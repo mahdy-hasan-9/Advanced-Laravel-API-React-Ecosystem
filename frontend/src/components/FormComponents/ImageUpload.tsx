@@ -3,10 +3,10 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, type UploadFile, type UploadProps } from 'antd';
 
 interface ImageUploadProps {
-    value?: UploadFile[];          
-    onChange?: (fileList: UploadFile[]) => void;  
-    imageUrl?: string;        
-}  
+    value?: UploadFile[];
+    onChange?: (fileList: UploadFile[]) => void;
+    imageUrl?: string;
+}
 
 const ImageUpload = ({ value, onChange, imageUrl }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -28,7 +28,6 @@ const ImageUpload = ({ value, onChange, imageUrl }) => {
         }
     }, [imageUrl]);
 
-    // Handle form value changes (for edit form prepopulation)
     useEffect(() => {
         if (value && value.length > 0) {
             setFileList(value);
@@ -64,6 +63,7 @@ const ImageUpload = ({ value, onChange, imageUrl }) => {
                     onChange={handleChange}
                     maxCount={1}
                     accept="image/*"
+                    beforeUpload={() => false}
                 >
                     {fileList.length >= 1 ? null : uploadButton}
                 </Upload>
