@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Student;
 
 use App\Http\Controllers\Controller;
 use App\Http\Request\Backend\Student\StudentRequest;
+use App\Http\Resources\Backend\StudentResource;
 use App\Models\Student;
 use App\Services\Backend\Student\StudentService;
 
@@ -19,18 +20,21 @@ class StudentController extends Controller
 
     public function index()
     {
-        // {"page":"1","per_page":"5","class_id":"11","activities":"6,5,4","books":"7,8"}
-
         $page = request()->query('page', 1);
         $perPage = request()->query('per_page', 10);
-
         $classId = request()->query('class_id');
         $activities = request()->query('activities');
         $books = request()->query('books');
+        $search = request()->query('search');
 
-        $classId = ($classId === 'undefined' || $classId === 'null' || $classId === '') ? null : $classId;
-        $activities = ($activities === 'undefined' || $activities === 'null' || $activities === '') ? null : $activities;
-        $books = ($books === 'undefined' || $books === 'null' || $books === '') ? null : $books;
+
+        $params = clean_request_params(['class_id', 'activities', 'books', 'search']);
+
+        $classId = $params['class_id'];
+        $activities = $params['activities'];
+        $books = $params['books'];
+        $search = $params['search'];
+
 
         $student = Student::with([
             'studentClass' => function ($query) {
@@ -43,21 +47,10 @@ class StudentController extends Controller
                 $query->select('books.id', 'books.name');
             }
         ])
-            ->when($classId, function ($query) use ($classId) {
-                 $query->where('class_id', (int) $classId);
-            })
-            ->when($activities , function ($query, $activities) {
-                $activityIds = explode(',', $activities);
-                $query->whereHas('activities', function ($q) use ($activityIds) {
-                    $q->whereIn('activities.id', $activityIds);
-                });
-            })
-            ->when($books , function ($query, $books) {
-                $bookIds = explode(',', $books);
-                $query->whereHas('books', function ($q) use ($bookIds) {
-                    $q->whereIn('books.id', $bookIds);
-                });
-            })
+            ->filterByClass($params['class_id'])
+            ->filterByActivities($params['activities'])
+            ->filterByBooks($params['books'])
+            ->search($params['search'])
             ->orderBy('id', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
 

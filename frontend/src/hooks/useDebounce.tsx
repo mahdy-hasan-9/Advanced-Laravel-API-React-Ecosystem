@@ -1,26 +1,28 @@
-// hooks/useDebounceCallback.js
+
 import { useRef, useCallback } from 'react';
 
-export const useDebounceCallback = (callback, delay = 500) => {
-    const timeoutRef = useRef(null);
+export const useDebounceCallback = (
+    callback: (...args: any[]) => void,
+    delay = 500
+) => {
+    const timeoutRef = useRef<number | null>(null);
 
-    const debouncedCallback = useCallback((...args) => {
+    const debouncedCallback = useCallback((...args: any[]) => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
 
-        timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = window.setTimeout(() => {
             callback(...args);
         }, delay);
     }, [callback, delay]);
 
-    // Cancel pending debounce
     const cancel = useCallback(() => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
         }
     }, []);
 
     return [debouncedCallback, cancel];
-};
 };

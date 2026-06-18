@@ -29,11 +29,7 @@ const TableHeader = ({search, setSearch, columnInfo, handleChangeColumns, setFil
 
     return (
         <>
-            <div className='grid md:grid-cols-2 gap-5 mb-5'>
-                <div className='w-full'>
-                    <Input placeholder='Search...' className='w-full' value={search} onChange={(e) => handleSearch(e)} />
-                </div>
-
+            <div className='grid md:grid-cols-1 gap-5 mb-5'>
                 <div className='w-full'>
                     <div className='text-end'>
                         <div className='flex justify-end gap-3'>
