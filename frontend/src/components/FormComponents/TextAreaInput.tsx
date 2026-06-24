@@ -2,9 +2,11 @@ import { Form, Input } from 'antd';
 
 const { TextArea } = Input;
 
+import type { ReactNode } from 'react';
+
 interface TextAreaInputProps {
     name: string;
-    label: string;
+    label: ReactNode;
     placeholder?: string;
     required?: boolean;
     min?: number;

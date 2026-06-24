@@ -2,18 +2,21 @@ import { useEffect, useState } from "react";
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, type UploadFile, type UploadProps } from 'antd';
 
+import { message } from 'antd';
+
 interface ImageUploadProps {
     value?: UploadFile[];
     onChange?: (fileList: UploadFile[]) => void;
     imageUrl?: string;
+    name?: string;
+    maxSize?: number;
 }
 
-const ImageUpload = ({ value, onChange, imageUrl }: ImageUploadProps) => {
+const ImageUpload = ({ value, onChange, imageUrl, name, maxSize }: ImageUploadProps) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
 
-    // Handle external imageUrl prop (for simple cases)
     useEffect(() => {
         if (imageUrl && !value?.length) {
             setFileList([
@@ -41,6 +44,14 @@ const ImageUpload = ({ value, onChange, imageUrl }: ImageUploadProps) => {
         setPreviewOpen(true);
     };
 
+    const beforeUpload = (file: UploadFile) => {
+        if (maxSize && file.size / 1024 / 1024 > maxSize) {
+            message.error(`File size should not exceed ${maxSize} MB`);
+            return Upload.LIST_IGNORE;
+        }
+        return false;
+    };
+
     const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
         setFileList(newFileList);
         onChange?.(newFileList);
@@ -63,7 +74,7 @@ const ImageUpload = ({ value, onChange, imageUrl }: ImageUploadProps) => {
                     onChange={handleChange}
                     maxCount={1}
                     accept="image/*"
-                    beforeUpload={() => false}
+                    beforeUpload={beforeUpload}
                 >
                     {fileList.length >= 1 ? null : uploadButton}
                 </Upload>

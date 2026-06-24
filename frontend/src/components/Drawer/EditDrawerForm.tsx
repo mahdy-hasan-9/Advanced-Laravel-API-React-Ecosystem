@@ -12,7 +12,7 @@ import MultipleCheckboxInput from '../FormComponents/MultipleCheckboxInput';
 import { getActivityList, getBooksList, getClassList, getStudentDetails, updateStudentService } from '../../services/studentService';
 import toast from 'react-hot-toast';
 import ImageUpload from '../FormComponents/ImageUpload';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToggleDrawer } from '../../hooks/useToggleDrawer';
 import { useLocation } from 'react-router-dom';
 

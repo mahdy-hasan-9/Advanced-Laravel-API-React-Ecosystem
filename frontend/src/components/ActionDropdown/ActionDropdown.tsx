@@ -1,14 +1,12 @@
-import { Button, Dropdown, message, Modal } from 'antd'
+import { Dropdown, message, Modal } from 'antd'
 import actionIcon from '../../assets/icons/action.svg'
 import editIcon from '../../assets/icons/edit.svg';
 import deleteIcon from '../../assets/icons/trash.svg'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useToggleDrawer } from '../../hooks/useToggleDrawer';
 import { deleteStudentService } from '../../services/studentService';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import EditDrawerForm from '../Drawer/EditDrawerForm';
-import EditDrawer from '../Drawer/EditDrawer';
 
 const ActionDropdown = ({ data }) => {
 
@@ -36,7 +34,7 @@ const ActionDropdown = ({ data }) => {
     })
 
 
-    const hangleDelete = async (id : any) => {
+    const hangleDelete = async (id: any) => {
         try {
             await deleteStudent(id)
             message.success('Student deleted successfully!');

@@ -7,7 +7,7 @@ interface Option {
 
 interface SingleSelectWithSearchInputProps {
     name: string;
-    label: string;
+    label: React.ReactNode;
     options: Option[];
     placeholder?: string;
     required?: boolean;
