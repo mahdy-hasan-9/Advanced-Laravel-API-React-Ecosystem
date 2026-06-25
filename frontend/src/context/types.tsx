@@ -1,3 +1,4 @@
+import type { UseMutationResult } from "@tanstack/react-query";
 
 export interface User {
     id: number;
@@ -27,4 +28,9 @@ export interface AuthContextType {
     profile: ProfileData | null;
     isProfileLoading: boolean;
     refetchProfile: () => void;
+    logoutHandler: () => void;
+    loginHandlerMutation: UseMutationResult<any, unknown, any, unknown>;
+    // Register mutation result for user registration flow
+    registerHandlerMutation: UseMutationResult<any, unknown, any, unknown>;
+
 }

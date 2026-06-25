@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { Avatar, List, Button, Empty, Typography } from 'antd';
 import { UserOutlined, CheckOutlined, DeleteOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
 import Notification from './Notification';
 
 const { Text } = Typography;
@@ -14,16 +13,11 @@ interface NotificationItem {
     read: boolean;
 }
 
-interface UserProfile {
-    name: string;
-    email: string;
-    avatar: string;
-}
 
 interface ProfileAndNotificationProps {
-    profileItems: MenuProps['items'];
+    profileItems: any,
     logoutHandler: () => void;
-    userProfile: UserProfile;
+    userProfile: any;
 }
 
 const notificationData = [

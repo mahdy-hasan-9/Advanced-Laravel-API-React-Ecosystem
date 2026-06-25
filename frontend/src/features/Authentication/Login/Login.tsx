@@ -1,32 +1,27 @@
-
-import { useState } from 'react';
-import { Button, Checkbox, Form, Input, Spin } from 'antd';
+import { useMutation } from '@tanstack/react-query';
+import { Button, Form, Input, Spin } from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { loginService } from '../../../services/authService';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { useContext } from 'react';
+import { AuthContext } from '../../../context/AuthContext';
 
 const loginSchema = z.object({
-    email: z
-        .string(),
-    password: z
-        .string()
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(1, 'Password is required')
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const { loginHandlerMutation } = useContext(AuthContext);
     const {
         control,
         handleSubmit,
-        formState: { errors, isSubmitting },
-        setError,
-        reset,
+        formState: { errors },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -36,37 +31,14 @@ const Login = () => {
         mode: 'onBlur',
     });
 
-
-    const onSubmit = async (data: LoginFormData) => {
-        setLoading(true);
-        try {
-            const resp = await loginService(data);
-            localStorage.setItem('token', resp.token);
-            if(resp.status == 200){
-                reset();
-                navigate('/', { replace: true });
-                toast.success(resp.message || 'Logged In');
-            }
-        } catch (error: any) {
-            if (error.status === 422 && error.errors) {
-                for (const fieldName in error.errors) {
-                    setError(fieldName as any, {
-                        type: 'server',
-                        message: error.errors[fieldName][0],
-                    });
-                }
-            } else {
-                toast.error(error.message || 'Something went wrong');
-            }
-        } finally {
-            setLoading(false);
-        }
+    const onSubmit = (data: LoginFormData) => {
+        loginHandlerMutation.mutate(data);
     };
 
     return (
-        <Spin spinning={loading} description="Login your account...">
+        <Spin spinning={loginHandlerMutation.isPending} description="Logging into your account...">
             <Form
-                name="register"
+                name="login"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 32 }}
                 style={{ maxWidth: 600, margin: '0 auto', padding: '24px' }}
@@ -104,7 +76,7 @@ const Login = () => {
                             <Input.Password
                                 {...field}
                                 placeholder="••••••••"
-                                autoComplete="new-password"
+                                autoComplete="current-password"
                             />
                         </Form.Item>
                     )}
@@ -113,18 +85,18 @@ const Login = () => {
                     <Button
                         type="primary"
                         htmlType="submit"
-                        loading={isSubmitting || loading}
-                        disabled={isSubmitting}
+                        loading={loginHandlerMutation.isPending}
+                        disabled={loginHandlerMutation.isPending}
                         block
                         size="large"
                     >
-                        {isSubmitting ? 'Login in...' : 'Login Account'}
+                        {loginHandlerMutation.isPending ? 'Logging in...' : 'Login Account'}
                     </Button>
                 </Form.Item>
             </Form>
-             <Link to='/register'>Register Here</Link>
+            <Link to='/register' style={{ display: 'block', textAlign: 'center' }}>Register Here</Link>
         </Spin>
     );
 }
 
-export default Login
+export default Login;

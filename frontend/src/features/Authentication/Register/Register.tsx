@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import { Button, Checkbox, Form, Input, Spin } from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { registerService } from '../../../services/authService';
-import toast from 'react-hot-toast';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { AuthContext } from '../../../context/AuthContext';
 
 const registerSchema = z.object({
     name: z
@@ -23,17 +22,14 @@ const registerSchema = z.object({
         .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
         .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
         .regex(/[0-9]/, 'Password must contain at least one number'),
-    accept_terms: z.literal(true, {
-        errorMap: () => ({ message: 'You must accept the terms and conditions' }),
-    }),
+    accept_terms: z.boolean().refine(val => val === true, { errorMap: () => ({ message: 'You must accept the terms and conditions' }) }),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 
 const Register = () => {
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+
     const {
         control,
         handleSubmit,
@@ -51,34 +47,34 @@ const Register = () => {
         mode: 'onBlur',
     });
 
+    const authContext = useContext(AuthContext);
+    const { registerHandlerMutation } = authContext;
 
-    const onSubmit = async (data: RegisterFormData) => {
-        setLoading(true);
-        try {
-            const resp = await registerService(data);
-            if(resp.status == 201){
-                reset();
-                navigate('/login', { replace: true });
-                toast.success(resp.message || 'Logged In');
-            }
-        } catch (error: any) {
-            if (error.status === 422 && error.errors) {
-                for (const fieldName in error.errors) {
-                    setError(fieldName as any, {
-                        type: 'server',
-                        message: error.errors[fieldName][0],
-                    });
+
+    const onSubmit = (data: RegisterFormData) => {
+        registerHandlerMutation.mutate(data, {
+            onSuccess: (resp) => {
+                if (resp.status === 201) {
+                    reset();
                 }
-            } else {
-                console.error(error.message);
+            },
+            onError: (error: any) => {
+                if (error.status === 422 && error.errors) {
+                    for (const fieldName in error.errors) {
+                        setError(fieldName as any, {
+                            type: 'server',
+                            message: error.errors[fieldName][0],
+                        });
+                    }
+                } else {
+                    console.error(error.message);
+                }
             }
-        } finally {
-            setLoading(false);
-        }
+        });
     };
-
+    const isPending = registerHandlerMutation.isPending;
     return (
-        <Spin spinning={loading} description="Creating your account...">
+        <Spin spinning={isPending} description="Creating your account...">
             <Form
                 name="register"
                 labelCol={{ span: 8 }}
@@ -150,7 +146,7 @@ const Register = () => {
                             wrapperCol={{ offset: 8, span: 16 }}
                         >
                             <Checkbox
-                                checked={value}
+                                checked={!!value}
                                 onChange={(e) => onChange(e.target.checked)}
                             >
                                 I accept the{' '}
@@ -165,7 +161,7 @@ const Register = () => {
                     <Button
                         type="primary"
                         htmlType="submit"
-                        loading={isSubmitting || loading}
+                        loading={isSubmitting || isPending}
                         disabled={isSubmitting}
                         block
                         size="large"
@@ -174,7 +170,7 @@ const Register = () => {
                     </Button>
                 </Form.Item>
             </Form>
-             <Link to='/login'>Login Here</Link>
+            <Link to='/login'>Login Here</Link>
         </Spin>
     );
 };

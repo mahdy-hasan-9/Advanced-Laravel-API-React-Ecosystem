@@ -3,11 +3,9 @@ import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme, Button } from 'antd';
 import type { MenuProps } from 'antd';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { menuOptions, menuPaths } from './sidebar/menuOption';
 import ProfileAndNotification from './profileAndNotification';
-import toast from 'react-hot-toast';
-import { logoutService } from '../services/authService';
 import { AuthContext } from '../context/AuthContext';
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -18,11 +16,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     name: '',
     email: '',
   });
-  const [loading, setLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [mobile, setMobile] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -54,7 +50,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     }
   }, [mobile]);
 
-  const { profile, refetchProfile } = useContext(AuthContext);
+  const { profile, logoutHandler } = useContext(AuthContext);
 
   useEffect(() => {
     if (profile) {
@@ -64,25 +60,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       })
     }
   }, [profile]);
-
-  const logoutHandler = async () => {
-
-
-    setLoading(true);
-    try {
-      const resp = await logoutService();
-      if (resp.status === 200 && resp.success === true) {
-        localStorage.removeItem('token');
-        navigate('/login', { replace: true });
-        toast.success(resp.message || 'Logged out successfully');
-      }
-    } catch (error: any) {
-      toast.error(error.message || 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
-  };
-
 
   const profileItems: MenuProps['items'] = [
     {
@@ -177,7 +154,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             />
 
             <ProfileAndNotification
-              user={user}
               profileItems={profileItems}
               logoutHandler={logoutHandler}
               userProfile={userProfile}
