@@ -1,10 +1,7 @@
-
 import { useContext, type ReactNode } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
-
-
-
+// ========== SINGLE ROLE ==========
 interface RequireRoleProps {
     role: string;
     children: ReactNode;
@@ -20,7 +17,7 @@ export const RequireRole = ({ role, children, fallback = null }: RequireRoleProp
     return children;
 };
 
-
+// ========== ANY ONE ROLE ==========
 interface RequireAnyRoleProps {
     roles: string[];
     children: ReactNode;
@@ -42,6 +39,7 @@ export const RequireAnyRole = ({
     return children;
 };
 
+// ========== ALL ROLES ==========
 interface RequireAllRolesProps {
     roles: string[];
     children: ReactNode;
@@ -63,6 +61,7 @@ export const RequireAllRoles = ({
     return children;
 };
 
+// ========== SINGLE PERMISSION ==========
 interface RequirePermissionProps {
     permission: string;
     children: ReactNode;
@@ -82,7 +81,7 @@ export const RequirePermission = ({
     return children;
 };
 
-
+// ========== ANY ONE PERMISSION ==========
 interface RequireAnyPermissionProps {
     permissions: string[];
     children: ReactNode;
@@ -102,7 +101,7 @@ export const RequireAnyPermission = ({
     return children;
 };
 
-
+// ========== ALL PERMISSIONS ==========
 interface RequireAllPermissionsProps {
     permissions: string[];
     children: ReactNode;

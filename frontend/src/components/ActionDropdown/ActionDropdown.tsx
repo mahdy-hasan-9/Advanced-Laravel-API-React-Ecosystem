@@ -7,6 +7,7 @@ import { useToggleDrawer } from '../../hooks/useToggleDrawer';
 import { deleteStudentService } from '../../services/studentService';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { RequireAnyRole } from '../../layouts/PermissionGuard';
 
 const ActionDropdown = ({ data }) => {
 
@@ -44,15 +45,26 @@ const ActionDropdown = ({ data }) => {
     }
 
 
+
     const items = [{
         key: 'edit',
-        label: <div onClick={handleEdit} className='flex items-center gap-x-5'><img src={editIcon} alt="" />
-            <p>edit</p></div>
+        label:
+            <RequireAnyRole
+                roles={['admin', 'manager']}
+            >
+                <div onClick={handleEdit} className='flex items-center gap-x-5'><img src={editIcon} alt="" />
+                    <p>edit</p></div>
+            </RequireAnyRole>
     },
     {
         key: 'delete',
-        label: <div onClick={() => setIsOpen(true)} className='flex items-center gap-x-5'><img src={deleteIcon} alt="" />
-            <p>delete</p></div>
+        label:
+            <RequireAnyRole
+                roles={['admin', 'manager']}
+            >
+                <div onClick={() => setIsOpen(true)} className='flex items-center gap-x-5'><img src={deleteIcon} alt="" />
+                    <p>delete</p></div>
+            </RequireAnyRole>
     }]
 
     return (

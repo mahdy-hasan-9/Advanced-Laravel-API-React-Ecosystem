@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useContext } from 'react'
 import TableTitle from './TableTitle'
 import TableHeader from './TableHeader'
 import { Pagination, Table, Spin, Input } from 'antd';
@@ -10,9 +10,10 @@ import {
 import AddDrawer from '../Drawer/AddDrawer';
 import { getStudentList } from '../../services/studentService';
 import { useQuery } from '@tanstack/react-query';
-import { columns } from './studentTableColumn';
+import { getColumns } from './studentTableColumn';
 import EditDrawer from '../Drawer/EditDrawer';
 import { useDebounceCallback } from '../../hooks/useDebounce';
+import { AuthContext } from '../../context/AuthContext';
 
 const itemRender = (_, type, originalElement) => {
   return type === "prev" ? (
@@ -23,7 +24,7 @@ const itemRender = (_, type, originalElement) => {
 }
 
 const StudentTable = () => {
-  const [columnInfo, setColumnsInfo] = useState(columns);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
 
@@ -32,12 +33,20 @@ const StudentTable = () => {
   const [debouncedSetSearch, cancelDebounce] = useDebounceCallback(
     (value: string) => {
       setDebouncedSearch(value);
-      setCurrentPage(1); 
+      setCurrentPage(1);
     },
     1000
   );
   const isSearching = searchInput !== debouncedSearch;
 
+  const { profile } = useContext(AuthContext);
+
+
+  const userRoles = Array.isArray(profile?.role)
+    ? profile.role
+    : profile?.role
+      ? [profile.role]
+      : [];
 
   const [filters, setFilters] = useState({
     class_id: '',
@@ -45,9 +54,7 @@ const StudentTable = () => {
     books: [],
   });
 
-  const handleChangeColumns = (cols) => {
-    setColumnsInfo(cols)
-  }
+  const dynamicColumns = getColumns(userRoles);
 
   const handleResetFilters = () => {
     setFilters({
@@ -59,9 +66,17 @@ const StudentTable = () => {
     setCurrentPage(1);
   };
 
-
   const buildParams = useCallback(() => {
-    const params = {
+    type Params = {
+      page: number;
+      per_page: number;
+      class_id?: string;
+      activities?: string;
+      books?: string;
+      search?: string;
+    };
+
+    const params: Params = {
       page: currentPage,
       per_page: pageSize,
     };
@@ -91,7 +106,7 @@ const StudentTable = () => {
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
-    setSearchInput(value); 
+    setSearchInput(value);
     if (value.trim() === '') {
       cancelDebounce();
       setDebouncedSearch('');
@@ -100,16 +115,17 @@ const StudentTable = () => {
       debouncedSetSearch(value);
     }
   };
+
   const handleClearSearch = () => {
     setSearchInput('');
     setDebouncedSearch('');
     cancelDebounce();
     setCurrentPage(1);
   };
+
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
-
 
   if (isPending) {
     return (
@@ -119,7 +135,7 @@ const StudentTable = () => {
         alignItems: 'center',
         height: '50vh'
       }}>
-        <Spin size="large" description="Loading students..." />
+        <Spin size="large" />
       </div>
     )
   }
@@ -153,30 +169,26 @@ const StudentTable = () => {
               opacity: isSearching ? 0.7 : 1,
               transition: 'opacity 0.2s'
             }}
-            suffix={
-              isSearching ? (
-                <Spin size="small" />
-              ) : null
-            }
+            suffix={isSearching ? <Spin size="small" /> : null}
           />
         </div>
 
         <div>
           <TableHeader
-            columnInfo={columnInfo}
-            handleChangeColumns={handleChangeColumns}
+            columnInfo={dynamicColumns}
+            handleChangeColumns={() => { }}
             filters={filters}
             setFilters={setFilters}
             handleResetFilters={handleResetFilters}
           />
         </div>
 
-        <div style={{ overflowX: 'auto', width: '100%' }}>
+        <div className="hide-scrollbar" style={{ overflowX: 'auto', width: '100%' }}>
           <Table
             rowKey="id"
             rowSelection={{ type: "checkbox" }}
             dataSource={data?.data || []}
-            columns={columnInfo}
+            columns={dynamicColumns}
             pagination={false}
             scroll={{ x: 'max-content' }}
             size="small"

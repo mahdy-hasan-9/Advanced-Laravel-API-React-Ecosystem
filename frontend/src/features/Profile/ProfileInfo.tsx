@@ -9,7 +9,7 @@ import { updateProfile } from '../../services/authService';
 import toast from 'react-hot-toast';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { PermissionGuard, RoleGuard } from '../../layouts/PermissionGuard';
+import { RequireAnyPermission, RequireAnyRole } from '../../layouts/PermissionGuard';
 
 const ROLE_OPTIONS = [
     { label: 'Admin', value: 'admin' },
@@ -33,8 +33,6 @@ const ProfileInfo = () => {
             });
         }
     }, [profile, form]);
-
-
 
     const { mutate: submitProfile, isPending: isUpdating } = useMutation({
         mutationFn: updateProfile,
@@ -106,58 +104,59 @@ const ProfileInfo = () => {
                         />
                     </Col>
 
-
-                    <RoleGuard role="admin">
-                        <Col xs={24} md={12}>
-                            <SingleSelectWithSearchInput
-                                name="role"
-                                label="Role"
-                                options={ROLE_OPTIONS}
-                                placeholder="Select a role"
-                                showSearch
-                                allowClear
-                            />
-                        </Col>
-                    </RoleGuard>
-
-                    {/* <PermissionGuard permission="edit-articles">
-                        <Col xs={24} md={12}>
-                            <SingleSelectWithSearchInput
-                                name="role"
-                                label="Role"
-                                options={ROLE_OPTIONS}
-                                placeholder="Select a role"
-                                showSearch
-                                allowClear
-                            />
-                        </Col>
-                    </PermissionGuard> */}
-                </Row>
-
-                <Row gutter={16}>
-                    <Col xs={24} md={12}>
-                        <SwitchInput
-                            name="is_active"
-                            label="User Status"
-                            checkedChildren="Active"
-                            unCheckedChildren="Inactive"
-                        />
-                    </Col>
-                </Row>
-
-                <Form.Item style={{ marginTop: 24, marginBottom: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-                        <Button
-                            type="primary"
-                            size="large"
-                            onClick={handleSubmit}
-                            loading={isUpdating}
-                            icon={<SaveOutlined />}
+                    <RequireAnyRole
+                        roles={['admin', 'staff']}
+                    >
+                        <RequireAnyPermission
+                            permissions={['edit-articles', 'delete-articles']}
                         >
-                            Save All
-                        </Button>
-                    </div>
-                </Form.Item>
+                            <Col xs={24} md={12}>
+                                <SingleSelectWithSearchInput
+                                    name="role"
+                                    label="Role"
+                                    options={ROLE_OPTIONS}
+                                    placeholder="Select a role"
+                                    showSearch
+                                    allowClear
+                                />
+                            </Col>
+                        </RequireAnyPermission>
+                    </RequireAnyRole>
+                </Row>
+
+                <RequireAnyRole
+                    roles={['admin']}
+                >
+                    <Row gutter={16}>
+                        <Col xs={24} md={12}>
+                            <SwitchInput
+                                name="is_active"
+                                label="User Status"
+                                checkedChildren="Active"
+                                unCheckedChildren="Inactive"
+                            />
+                        </Col>
+                    </Row>
+                </RequireAnyRole>
+
+
+                <RequireAnyRole
+                    roles={['admin', 'manager', 'staff', 'student']}
+                >
+                    <Form.Item style={{ marginTop: 24, marginBottom: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                            <Button
+                                type="primary"
+                                size="large"
+                                onClick={handleSubmit}
+                                loading={isUpdating}
+                                icon={<SaveOutlined />}
+                            >
+                                Save All
+                            </Button>
+                        </div>
+                    </Form.Item>
+                </RequireAnyRole>
             </Form>
         </div>
     );

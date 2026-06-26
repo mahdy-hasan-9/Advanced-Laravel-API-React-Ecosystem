@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -13,10 +12,10 @@ class RoleAndPermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            'view-articles',
-            'create-articles',
-            'edit-articles',
-            'delete-articles',
+            'view-student',
+            'create-student',
+            'edit-student',
+            'delete-student',
         ];
 
         foreach ($permissions as $permission) {
@@ -29,9 +28,9 @@ class RoleAndPermissionSeeder extends Seeder
         $studentRole = Role::firstOrCreate(['name' => 'student', 'guard_name' => 'web']);
 
         $adminRole->syncPermissions(Permission::all());
-        $managerRole->syncPermissions(['view-articles', 'create-articles', 'edit-articles']);
-        $staffRole->syncPermissions(['view-articles', 'create-articles']);
-        $studentRole->syncPermissions(['view-articles']);
+        $managerRole->syncPermissions(['view-student', 'create-student', 'edit-student']);
+        $staffRole->syncPermissions(['view-student', 'create-student']);
+        $studentRole->syncPermissions(['view-student']);
 
 
         $admin = User::where('role', 'admin')->first();
