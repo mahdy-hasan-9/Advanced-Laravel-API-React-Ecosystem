@@ -4,18 +4,14 @@ import ColumnButton from '../ColumnButton/ColumnButton';
 import FilterButton from '../FilterButton/FilterButton';
 import FilterDataComponent from '../FilterDataComponent/FilterDataComponent';
 import { useToggleDrawer } from '../../hooks/useToggleDrawer';
+import { RequireAnyRole } from '../../layouts/PermissionGuard';
 
 
-const TableHeader = ({search, setSearch, columnInfo, handleChangeColumns, setFilters , filters , handleResetFilters }: any) => {
+const TableHeader = ({ search, setSearch, columnInfo, handleChangeColumns, setFilters, filters, handleResetFilters }: any) => {
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
     const toggleDrawer = useToggleDrawer();
-
-    const toggleFilter = () => {
-        setIsFiltersOpen((state) => !state);
-        handleResetFilters();
-    }
 
     const handleOpenDrawer = () => {
         toggleDrawer(true, "showDrawerAdd")
@@ -26,6 +22,9 @@ const TableHeader = ({search, setSearch, columnInfo, handleChangeColumns, setFil
         setSearch(evnt.target.value);
     }
 
+    const toggleFilter = () => {
+        setIsFiltersOpen((state) => !state);
+    }
 
     return (
         <>
@@ -34,8 +33,10 @@ const TableHeader = ({search, setSearch, columnInfo, handleChangeColumns, setFil
                     <div className='text-end'>
                         <div className='flex justify-end gap-3'>
                             <ColumnButton columnInfo={columnInfo} handleChangeColumns={handleChangeColumns} />
-                            <FilterButton toggleFilter={toggleFilter} handleResetFilters={handleResetFilters}/>
-                            <Button type='primary' onClick={handleOpenDrawer}>Add New</Button>
+                            <FilterButton toggleFilter={toggleFilter} />
+                            <RequireAnyRole roles={['admin', 'manager']}>
+                                <Button type='primary' onClick={handleOpenDrawer}>Add New</Button>
+                            </RequireAnyRole>
                         </div>
                     </div>
                 </div>
@@ -54,7 +55,7 @@ const TableHeader = ({search, setSearch, columnInfo, handleChangeColumns, setFil
                     <FilterDataComponent
                         setFilters={setFilters}
                         filters={filters}
-                       
+                        handleResetFilters={handleResetFilters}
                     />
                 </div>
 

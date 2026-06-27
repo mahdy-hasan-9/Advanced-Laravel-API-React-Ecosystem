@@ -1,4 +1,3 @@
-// src/views/Errors/NotFound404.tsx
 import { Button, Result } from 'antd';
 import { useNavigate } from 'react-router-dom';
 

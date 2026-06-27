@@ -19,7 +19,6 @@ const FilterDataComponent = ({ filters, setFilters }: any) => {
   const [values, setValues] = useState(null);
 
   const queryClient = useQueryClient();
-
   const classQuery = useQuery({
     queryKey: ['classList'],
     queryFn: getClassList,
@@ -81,6 +80,19 @@ const FilterDataComponent = ({ filters, setFilters }: any) => {
 
   }
 
+  const handleResetFilters = () => {
+    setFilters({
+      class_id: '',
+      activities: [],
+      books: [],
+    });
+    form.resetFields();
+
+  }
+
+
+
+
 
   return (
 
@@ -116,9 +128,14 @@ const FilterDataComponent = ({ filters, setFilters }: any) => {
             />
           </div>
           <div className='w-full text-end'>
-            <Button onClick={handleFilter} type="primary">
-              Apply Filter
-            </Button>
+            <Space>
+              <Button onClick={handleResetFilters} danger>
+                Reset
+              </Button>
+              <Button onClick={handleFilter} type="primary">
+                Apply Filter
+              </Button>
+            </Space>
           </div>
         </div>
       </div>

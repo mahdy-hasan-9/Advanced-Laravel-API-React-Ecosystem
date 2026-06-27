@@ -56,6 +56,7 @@ const StudentTable = () => {
 
   const dynamicColumns = getColumns(userRoles);
 
+
   const handleResetFilters = () => {
     setFilters({
       class_id: '',

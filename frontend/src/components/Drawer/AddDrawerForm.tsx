@@ -22,6 +22,12 @@ const GENDER_OPTIONS = [
     { label: 'Female', value: 'female' }
 ];
 
+import React, { Dispatch, SetStateAction } from 'react';
+
+interface AddDrawerFormProps {
+  setOpenDrawer: Dispatch<SetStateAction<boolean>>;
+}
+
 const AddDrawerForm = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
