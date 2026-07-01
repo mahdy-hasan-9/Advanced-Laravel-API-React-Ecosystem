@@ -1,12 +1,17 @@
-Application Overview:
-1.laravel 13 with inertia react without authentication
-2.api for admin dashboard in routes/api.php 
+Concept implemented in this project , full codes are inside master branch
+Laravel api export with resource.
+Database seeding ,Service Classes
+Crud
+One to many and Many to many relationship 
+Role permission with spatie
+Email sending 
+Background jobs with queue
+Laravel reverb 
+Event Listener
+Notification
+Full Text Search with Meili-Search
+Server side rendered datatable
+React js , Ant-design ui library
+Pusher js
 
 
-Technology used to build:
-1.laravel 13
-2.Inertia 
-3.React 
-
-Features:
-1.Authentication-api-with-sanctum.
