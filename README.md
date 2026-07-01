@@ -16,6 +16,10 @@ A robust, production-ready conceptual implementation demonstrating architectural
 * **Advanced Eloquent Relations:** Complex database modeling featuring robust **One-to-Many** and **Many-to-Many** relationships.
 * **Database Seeding & Factories:** Comprehensive database seeders for rapid local environment setup and testing.
 
+### 🔐 Authentication & Route Security
+* **SPA Authentication via Laravel Sanctum:** Secure, lightweight token-based authentication system tailored for Single Page Applications (SPAs) and mobile APIs.
+* **Protected Routes & Middleware:** Strict backend and frontend route guarding using custom and native Laravel middlewares to ensure only authenticated and authorized requests are processed.
+
 ### ⚡ Real-Time & Asynchronous Operations
 * **Laravel Reverb & Pusher.js:** Native WebSockets infrastructure driving real-time frontend updates.
 * **Event-Driven Architecture:** Decoupled workflows utilizing internal **Events** and **Listeners**.
@@ -23,11 +27,12 @@ A robust, production-ready conceptual implementation demonstrating architectural
 * **System Notifications:** Multi-channel system notifications keeping users informed in real time.
 
 ### 🔍 Security & Search Performance
-* **Granular RBAC:** -grade Role-Based Access Control implemented via the **Spatie Role & Permission** package.
+* **Granular RBAC:** Enterprise-grade Role-Based Access Control implemented via the **Spatie Role & Permission** package.
 * **Instant Full-Text Search:** High-performance, lightning-fast global search powered by **Meilisearch**.
 
 ### 💻 Frontend Architecture (React.js)
-* **Ant Design (AntD):** A polished, professional  UI kit handling complex states and inputs layout.
+* **Ant Design (AntD):** A polished, professional UI kit handling complex states and inputs layout.
+* **Protected React Routes:** Higher-Order Components (HOC) and custom hooks guarding client-side routing based on Sanctum authentication states.
 * **Server-Side Rendered Data Tables:** Server-optimized datatables capable of handling large-scale pagination, sorting, and filtering directly through API requests.
 
 ---
@@ -37,6 +42,7 @@ A robust, production-ready conceptual implementation demonstrating architectural
 | Layer | Technologies Used |
 | :--- | :--- |
 | **Backend Framework** | Laravel (PHP) |
+| **Authentication** | Laravel Sanctum |
 | **Frontend Library** | React.js |
 | **UI Framework** | Ant Design (AntD) |
 | **Real-Time WebSockets** | Laravel Reverb / Pusher.js |
