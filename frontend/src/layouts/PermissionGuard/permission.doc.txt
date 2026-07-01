@@ -1,0 +1,59 @@
+| Component               | Reads As                           | Use Case                   |
+| ----------------------- | ---------------------------------- | -------------------------- |
+| `RequireRole`           | "Require this role"                | শুধু Admin                 |
+| `RequireAnyRole`        | "Require any of these roles"       | Admin OR Manager           |
+| `RequireAllRoles`       | "Require all of these roles"       | Admin AND Manager          |
+| `RequirePermission`     | "Require this permission"          | edit articles              |
+| `RequireAnyPermission`  | "Require any of these permissions" | create OR edit             |
+| `RequireAllPermissions` | "Require all of these permissions" | create AND edit AND delete |
+
+
+
+roles - admin , manager , staff , student  
+
+
+
+
+import {
+    RequireRole,
+    RequireAnyRole,
+    RequireAllRoles,
+    RequirePermission,
+    RequireAnyPermission,
+    RequireAllPermissions
+} from '../../layouts/PermissionGuard';
+
+// 1. শুধু Admin দেখতে পারবে
+<RequireRole role="admin">
+    <Button>Delete User</Button>
+</RequireRole>
+
+// 2. Admin OR Manager যেকোনো একজন
+<RequireAnyRole roles={['admin', 'manager']}>
+    <Button>Edit Settings</Button>
+</RequireAnyRole>
+
+// 3. Admin AND Manager দুজনই লাগবে (rare case)
+<RequireAllRoles roles={['admin', 'manager']}>
+    <Button>Super Action</Button>
+</RequireAllRoles>
+
+// 4. শুধু edit articles permission
+<RequirePermission permission="edit articles">
+    <Button>Save Article</Button>
+</RequirePermission>
+
+// 5. create OR edit যেকোনো একটি
+<RequireAnyPermission permissions={['create articles', 'edit articles']}>
+    <Button>Write Article</Button>
+</RequireAnyPermission>
+
+// 6. create AND edit AND delete তিনটিই লাগবে
+<RequireAllPermissions permissions={['create articles', 'edit articles', 'delete articles']}>
+    <Button>Full Control</Button>
+</RequireAllPermissions>
+
+// 7. Fallback দিয়ে
+<RequireRole role="admin" fallback={<span>Access Denied</span>}>
+    <Button>Admin Only</Button>
+</RequireRole>
