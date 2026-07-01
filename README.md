@@ -13,5 +13,3 @@ Full Text Search with Meili-Search
 Server side rendered datatable
 React js , Ant-design ui library
 Pusher js
-
-
